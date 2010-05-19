@@ -1,0 +1,140 @@
+<project name="socialalertsconnector" basedir="." default="generate.all">
+    <property environment="env"/>
+    <property name="AXIS2_HOME" value="${env.AXIS2_HOME}"/>
+    <property name="wsdl.uri" value="socialalerts.wsdl"/>
+    <property name="service.target" value="build/service"/>
+    <property name="client.target" value="build/client"/>
+
+    <target name="run.client">
+
+        <condition property="params.ok">
+            <and>
+                <isset property="url"/>
+                <isset property="username"/>
+                <isset property="password"/>
+            </and>
+        </condition>
+
+        <fail message="One of the parameters are not set. Usage: SocialAlertsClient -Durl=&lt;url&gt; -Dusername=&lt;username&gt; -Dpassword=&lt;password&gt;"
+        unless="params.ok"/>
+        
+        <java classname="com.bazaarvoice.www.socialalerts.SocialAlertsClient" fork="true">
+            <arg line="${url} ${username} ${password}"/>
+            <classpath>
+                <pathelement location="${client.target}/SocialAlertsService-test-client.jar"/>
+                <fileset dir="${AXIS2_HOME}/lib">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="generate.all" depends="generate.service,generate.client"/>
+
+    <target name="generate.service">
+
+        <!--<delete dir="${service.target}"/>-->
+        <mkdir dir="${service.target}"/>
+        <mkdir dir="${service.target}/classes"/>
+
+        <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+            <arg line="-uri ${wsdl.uri}"/>
+            <arg line="-ss"/>
+            <arg line="-sd"/>
+            <arg line="-o ${service.target}"/>
+            <!-- Output directory in which to generate files --> <!-- NB it generates to the src folder under this directory!! -->
+            <classpath>
+                <fileset dir="${AXIS2_HOME}/lib">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </java>
+
+        <!--copy the already written skeleton class-->
+        <copy todir="${service.target}/src/com/bazaarvoice/www/socialalerts" overwrite="yes">
+            <fileset dir="service/src/com/bazaarvoice/www/socialalerts"/>
+          </copy>
+
+        <!--First let's compile the classes-->
+        <javac debug="on" memoryMaximumSize="256m" memoryInitialSize="256m" fork="true"
+               destdir="${service.target}/classes" srcdir="${service.target}/src">
+            <classpath>
+                <fileset dir="${AXIS2_HOME}/lib">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
+
+        <!--aar them up -->
+        <copy toDir="${service.target}/classes/META-INF" failonerror="false">
+            <fileset dir="${service.target}/resources">
+                <include name="*.xml"/>
+                <include name="*.wsdl"/>
+                <include name="*.xsd"/>         
+            </fileset>
+        </copy>
+        <copy toDir="${service.target}/classes" failonerror="false">
+            <fileset dir="config">
+                <include name="*.properties"/>
+            </fileset>
+        </copy>
+        <jar destfile="${service.target}/SocialAlertsService.aar">
+            <fileset excludes="**/Test.class" dir="${service.target}/classes"/>
+        </jar>
+
+        <antcall target="deploy.service"/>
+    </target>
+
+    <target name="undeploy.service">
+        <delete file="${AXIS2_HOME}/repository/services/socialalertsconnector.aar"/>
+    </target>
+
+    <target name="deploy.service">
+        <copy file="${service.target}/SocialAlertsService.aar" tofile="${AXIS2_HOME}/repository/services/socialalertsconnector.aar"
+              overwrite="true"/>
+    </target>
+
+    <target name="generate.client">
+        <!--<delete dir="${client.target}"/>-->
+        <mkdir dir="${client.target}"/>
+        <mkdir dir="${client.target}/classes"/>
+        <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+            <arg line="-uri ${wsdl.uri}"/>
+            <arg line="-u"/>
+            <arg line="-o ${client.target}"/>
+            <classpath>
+                <fileset dir="${AXIS2_HOME}/lib">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </java>
+
+        <copy file="client/src/com/bazaarvoice/www/socialalerts/SocialAlertsClient.java" todir="${client.target}/src/com/bazaarvoice/www/socialalerts"/>
+
+        <!--now compile the stub classes-->
+        <javac debug="on" memoryMaximumSize="256m" memoryInitialSize="256m" fork="true"
+               destdir="${client.target}/classes">
+            <src path="${client.target}/src"/>
+            <classpath>
+                <fileset dir="${AXIS2_HOME}/lib">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
+
+        <!--jar the compiled stuff-->
+        <jar destfile="${client.target}/SocialAlertsService-test-client.jar">
+            <fileset dir="${client.target}/classes">
+                <exclude name="**/META-INF/*.*"/>
+                <exclude name="**/lib/*.*"/>
+                <exclude name="**/*MessageReceiver.class"/>
+                <exclude name="**/*Skeleton.class"/>
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+</project>

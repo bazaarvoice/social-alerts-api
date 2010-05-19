@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2010 Bazaarvoice
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<wsdl:definitions targetNamespace="http://www.bazaarvoice.com/SocialAlerts"
+                  xmlns:apachesoap="http://xml.apache.org/xml-soap"
+                  xmlns:tns="http://www.bazaarvoice.com/SocialAlerts"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <wsdl:types>
+        <schema elementFormDefault="qualified" targetNamespace="http://www.bazaarvoice.com/SocialAlerts"
+                xmlns="http://www.w3.org/2001/XMLSchema"
+                xmlns:apachesoap="http://xml.apache.org/xml-soap"
+                xmlns:tns="http://www.bazaarvoice.com/SocialAlerts"
+                xmlns:intf="http://www.bazaarvoice.com/SocialAlerts"
+                xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+
+            <complexType name="Parameter">
+                <sequence>
+                    <element name="name" type="xsd:string"/>
+                    <element name="value" type="xsd:string"/>
+                </sequence>
+            </complexType>
+
+            <element name="loginRequest">
+                <complexType>
+                    <sequence>
+                        <element name="username" type="xsd:string"/>
+                        <element name="password" type="xsd:string"/>
+                        <element name="parameters" type="tns:Parameter" minOccurs="0" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+
+            <complexType name="LoginResult">
+                <sequence>
+                    <element name="sessionId" type="xsd:string"/>
+                </sequence>
+            </complexType>
+
+            <element name="loginResponse">
+                <complexType>
+                    <sequence>
+                        <element name="result" type="tns:LoginResult"/>
+                    </sequence>
+                </complexType>
+            </element>
+
+            <complexType name="Alert">
+                <sequence>
+                    <element name="alertID" type="xsd:string" />
+                    <element name="templateID" type="xsd:string" />
+                    <element name="destinationAddress" type="xsd:string" />
+                    <element name="parameters" type="tns:Parameter" minOccurs="0" maxOccurs="unbounded" />
+                </sequence>
+            </complexType>
+
+            <complexType name="AlertSendResult">
+                <sequence>
+                    <element name="alertID" type="xsd:string" />
+                    <element name="success" type="xsd:boolean" />
+                    <element name="fault" type="tns:SendFault" minOccurs="0" />
+                </sequence>
+            </complexType>
+
+            <element name="sendAlertRequest">
+                <complexType>
+                    <sequence>
+                        <element name="sessionId" type="xsd:string"/>
+                        <element name="alert" type="tns:Alert" />
+                    </sequence>
+                </complexType>
+            </element>
+
+            <element name="sendAlertResponse">
+                <complexType>
+                    <sequence>
+                        <element name="result" type="tns:AlertSendResult" />
+                    </sequence>
+                </complexType>
+            </element>
+
+            <element name="sendAlertBatchRequest">
+                <complexType>
+                    <sequence>
+                        <element name="sessionId" type="xsd:string"/>
+                        <element maxOccurs="unbounded" name="alert" type="tns:Alert" />
+                    </sequence>
+                </complexType>
+            </element>
+
+            <element name="sendAlertBatchResponse">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" name="result" type="tns:AlertSendResult" />
+                    </sequence>
+                </complexType>
+            </element>
+
+            <element name="logoutRequest">
+                <complexType>
+                    <sequence>
+                        <element name="sessionId" type="xsd:string"/>
+                    </sequence>
+                </complexType>
+            </element>
+
+            <element name="logoutResponse">
+                <complexType>
+                    <sequence>
+                        <element name="result" type="xsd:boolean" />
+                    </sequence>
+                </complexType>
+            </element>
+
+            <simpleType name="ErrorCode">
+                <restriction base="string">
+                    <enumeration value="ERROR_AUTH_FAILURE" />
+                    <enumeration value="ERROR_INVALID_SESSION_ID" />
+                    <enumeration value="ERROR_EXPIRED_SESSION" />
+                    <enumeration value="ERROR_INVALID_ALERT" />
+                    <enumeration value="ERROR_SEND_FAILED" />
+                </restriction>
+            </simpleType>
+
+            <complexType name="SocialAlertsFault">
+                <sequence>
+                    <element name="errorCode" type="tns:ErrorCode" />
+                    <element name="errorMessage" type="xsd:string" />
+                    <element name="vendorErrorCode" type="xsd:string" />
+                </sequence>
+            </complexType>
+
+            <element name="LoginFault">
+                <complexType>
+                    <complexContent>
+                        <extension base="tns:SocialAlertsFault" />
+                    </complexContent>
+                </complexType>
+            </element>
+
+            <element name="SendFault">
+                    <complexContent>
+                        <extension base="tns:SendFault" />
+                    </complexContent>
+            </element>
+
+            <complexType name="SendFault">
+                    <complexContent>
+                        <extension base="tns:SocialAlertsFault" />
+                    </complexContent>
+            </complexType>
+
+        </schema>
+    </wsdl:types>
+
+    <wsdl:message name="loginRequest">
+        <wsdl:part name="parameters" element="tns:loginRequest"></wsdl:part>
+    </wsdl:message>
+
+    <wsdl:message name="loginResponse">
+        <wsdl:part name="parameters" element="tns:loginResponse"></wsdl:part>
+    </wsdl:message>
+
+    <wsdl:message name="LoginFaultMessage">
+        <wsdl:part name="fault" element="tns:LoginFault"></wsdl:part>
+    </wsdl:message>
+
+    <wsdl:message name="sendAlertRequest">
+        <wsdl:part name="parameters" element="tns:sendAlertRequest"></wsdl:part>
+    </wsdl:message>
+
+    <wsdl:message name="sendAlertResponse">
+        <wsdl:part name="parameters" element="tns:sendAlertResponse"></wsdl:part>
+    </wsdl:message>
+
+    <wsdl:message name="sendAlertBatchRequest">
+        <wsdl:part name="parameters" element="tns:sendAlertBatchRequest"></wsdl:part>
+    </wsdl:message>
+
+    <wsdl:message name="sendAlertBatchResponse">
+        <wsdl:part name="parameters" element="tns:sendAlertBatchResponse"></wsdl:part>
+    </wsdl:message>
+
+    <wsdl:message name="SendFaultMessage">
+        <wsdl:part name="fault" element="tns:SendFault"></wsdl:part>
+    </wsdl:message>
+
+    <wsdl:message name="logoutRequest">
+        <wsdl:part name="parameters" element="tns:logoutRequest"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="logoutResponse">
+        <wsdl:part name="parameters" element="tns:logoutResponse"></wsdl:part>
+    </wsdl:message>
+
+    <wsdl:portType name="SocialAlerts">
+
+        <wsdl:operation name="login">
+            <wsdl:documentation>Login to the ESP</wsdl:documentation>
+            <wsdl:input name="loginRequest" message="tns:loginRequest"/>
+            <wsdl:output name="loginResponse" message="tns:loginResponse"/>
+            <wsdl:fault name="LoginException" message="tns:LoginFaultMessage"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="sendAlert">
+            <wsdl:documentation>Send a single alert through the ESP</wsdl:documentation>
+            <wsdl:input name="sendAlertRequest" message="tns:sendAlertRequest"></wsdl:input>
+            <wsdl:output name="sendAlertResponse" message="tns:sendAlertResponse"></wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="sendAlertBatch">
+            <wsdl:documentation>Send alert batch through the ESP</wsdl:documentation>
+            <wsdl:input name="sendAlertBatchRequest" message="tns:sendAlertBatchRequest"></wsdl:input>
+            <wsdl:output name="sendAlertBatchResponse" message="tns:sendAlertBatchResponse"></wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="logout">
+            <wsdl:documentation>Log out from the ESP</wsdl:documentation>
+            <wsdl:input name="logoutRequest" message="tns:logoutRequest"/>
+            <wsdl:output name="logoutResponse" message="tns:logoutResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="SocialAlertsSoapBinding" type="tns:SocialAlerts">
+        <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <wsdl:operation name="login">
+            <wsdlsoap:operation soapAction="login" />
+            <wsdl:input>
+                <wsdlsoap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal" />
+            </wsdl:output>
+            <wsdl:fault name="LoginException">
+                <wsdlsoap:fault name="LoginException" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="sendAlert">
+            <wsdlsoap:operation soapAction="sendAlert" />
+            <wsdl:input>
+                <wsdlsoap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="sendAlertBatch">
+            <wsdlsoap:operation soapAction="sendAlertBatch" />
+            <wsdl:input>
+                <wsdlsoap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="logout">
+            <wsdlsoap:operation soapAction="logout" />
+            <wsdl:input>
+                <wsdlsoap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <wsdl:service name="SocialAlertsService">
+        <wsdl:port binding="tns:SocialAlertsSoapBinding" name="SocialAlerts">
+            <wsdlsoap:address location="http://localhost:8080/axis2/services/SocialAlerts"/>
+        </wsdl:port>
+    </wsdl:service>
+
+</wsdl:definitions>
