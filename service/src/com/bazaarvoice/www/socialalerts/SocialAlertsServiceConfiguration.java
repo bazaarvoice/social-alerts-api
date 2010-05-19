@@ -80,11 +80,11 @@ public class SocialAlertsServiceConfiguration {
     }
 
     public String getTemplateSubject(String templateID) {
-        return configProperties.getProperty("template."+templateID+".subject");
+        return configProperties.getProperty("template." + templateID + ".subject");
     }
 
     public String getTemplateBody(String templateID) {
-        return configProperties.getProperty("template."+templateID+".body");
+        return configProperties.getProperty("template." + templateID + ".body");
     }
 
 }

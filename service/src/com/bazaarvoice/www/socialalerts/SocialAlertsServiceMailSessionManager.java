@@ -26,7 +26,8 @@ import java.util.Properties;
 import java.util.UUID;
 
 /**
- * Session Manager class maintains a session with an SMTP server using JavaMail
+ * Session Manager class maintains a session with an SMTP server
+ * using JavaMail
  */
 public class SocialAlertsServiceMailSessionManager {
 

@@ -16,7 +16,10 @@
  */
 package com.bazaarvoice.www.socialalerts;
 
-import javax.mail.*;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -25,14 +28,14 @@ import javax.mail.internet.MimeMessage;
  */
 public class SocialAlertsServiceMailSender {
 
-    public static void sendMailUsingTemplate(String sessionUUID, String fromAddress, String toAddress, 
-                                             String templateID, Parameter[] parameters) throws MessagingException{
+    public static void sendMailUsingTemplate(String sessionUUID, String fromAddress, String toAddress,
+                                             String templateID, Parameter[] parameters) throws MessagingException {
         SocialAlertsServiceConfiguration config = SocialAlertsServiceConfiguration.getInstance();
         String subject = config.getTemplateSubject(templateID);
         String body = config.getTemplateBody(templateID);
         for (Parameter p : parameters) {
-            subject = subject.replaceAll("\\{"+p.getName()+"\\}", p.getValue());
-            body = body.replaceAll("\\{"+p.getName()+"\\}", p.getValue());
+            subject = subject.replaceAll("\\{" + p.getName() + "\\}", p.getValue());
+            body = body.replaceAll("\\{" + p.getName() + "\\}", p.getValue());
         }
 
         sendMail(sessionUUID, fromAddress, toAddress, subject, body);

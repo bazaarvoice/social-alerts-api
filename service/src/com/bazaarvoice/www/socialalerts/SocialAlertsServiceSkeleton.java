@@ -16,16 +16,16 @@
  */
 package com.bazaarvoice.www.socialalerts;
 
-import java.util.logging.Logger;
 import javax.mail.MessagingException;
 import javax.mail.Transport;
+import java.util.logging.Logger;
 
 /**
  * Reference implementation for the SocialAlerts web service
- *
+ * <p/>
  * Uses JavaMail to send messages using a configured smtp server
  * (for instance, gmail).
- *
+ * <p/>
  * See socialalerts.properties for configuration parameters
  */
 public class SocialAlertsServiceSkeleton {
@@ -82,7 +82,7 @@ public class SocialAlertsServiceSkeleton {
 
         SendAlertBatchResponse response = new SendAlertBatchResponse();
 
-        for( Alert alert : param0.getAlert()) {
+        for (Alert alert : param0.getAlert()) {
             AlertSendResult result = sendAlert(sessionID, alert);
             response.addResult(result);
         }
@@ -106,7 +106,7 @@ public class SocialAlertsServiceSkeleton {
             response.setResult(false);
             logger.warning("Failed closing session: " + sessionID);
         }
-        
+
         return response;
     }
 
@@ -124,15 +124,13 @@ public class SocialAlertsServiceSkeleton {
                     ErrorCode.ERROR_INVALID_SESSION_ID, "");
             result.setFault(fault);
             result.setSuccess(false);
-        }
-        else if (!transport.isConnected()) {
+        } else if (!transport.isConnected()) {
             // session expired
             SendFault fault = generateSendFault("Expired session id: " + sessionID,
                     ErrorCode.ERROR_EXPIRED_SESSION, "");
             result.setFault(fault);
             result.setSuccess(false);
-        }
-        else {
+        } else {
             // session is valid and connected, let's try sending alert
             try {
                 SocialAlertsServiceMailSender.sendMailUsingTemplate(

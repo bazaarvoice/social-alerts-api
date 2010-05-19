@@ -24,6 +24,7 @@ import java.util.UUID;
  * <p/>
  * 1. Login to the web service
  * 2. Send a test alert
+ * 3. Send a test batch with 2 alerts
  * 3. Log out
  */
 public final class SocialAlertsClient {
