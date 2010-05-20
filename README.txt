@@ -1,5 +1,5 @@
 =================================================================
-Bazaarvoice SocialAlerts Web Service API Reference Implementation
+Bazaarvoice Social Alerts Connector API Reference Implementation
 =================================================================
 
 =================================================================
@@ -8,7 +8,7 @@ Introduction
 
 This package includes the following:
 
-* WSDL for the SocialAlerts Web Service API (socialalerts.wsdl)
+* WSDL for the Social Alerts Connector API (socialalerts.wsdl)
 * Reference Implementation of the Web Service API
 * Sample client tool
 
@@ -37,7 +37,7 @@ from the AXIS2_HOME/bin directory.
 Building and Running The Reference Implementation
 =================================================================
 
-Social Alerts Web Service API Reference Implementation provides a simple implementation
+Social Alerts Connector API Reference Implementation provides a simple implementation
 of the web service interface which uses JavaMail to send messages to an SMTP server.
 Reference Implementation has been tested with google's gmail smtps server.
 
