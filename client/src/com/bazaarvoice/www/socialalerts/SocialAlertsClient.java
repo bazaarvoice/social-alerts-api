@@ -31,14 +31,15 @@ public final class SocialAlertsClient {
 
     public static void main(String[] args) {
 
-        if (args.length != 3) {
-            System.err.println("Usage: SocialAlertsClient <web_service_url> <user> <password>");
+        if (args.length != 4) {
+            System.err.println("Usage: SocialAlertsClient <web_service_url> <user> <password> <destination>");
             return;
         }
 
         String url = args[0];
         String username = args[1];
         String password = args[2];
+        String destEmail = args[3];
 
         try {
             SocialAlertsService socialAlertsService = new SocialAlertsServiceStub(url);
@@ -47,10 +48,10 @@ public final class SocialAlertsClient {
             String sessionID = login(username, password, socialAlertsService);
 
             // send a test alert
-            sendAlert(socialAlertsService, sessionID);
+            sendAlert(socialAlertsService, sessionID, destEmail);
 
             // send a test alert batch
-            sendAlertBatch(socialAlertsService, sessionID);
+            sendAlertBatch(socialAlertsService, sessionID, destEmail);
 
             // log out
             logout(socialAlertsService, sessionID);
@@ -75,8 +76,8 @@ public final class SocialAlertsClient {
                 ", success: " + logoutResponse.getResult());
     }
 
-    private static void sendAlert(SocialAlertsService socialAlertsService, String sessionID) throws RemoteException {
-        Alert alert = createTestAlert("single");
+    private static void sendAlert(SocialAlertsService socialAlertsService, String sessionID, String destEmail) throws RemoteException {
+        Alert alert = createTestAlert("single", destEmail);
 
         SendAlertRequest alertRequest = new SendAlertRequest();
         alertRequest.setSessionId(sessionID);
@@ -87,10 +88,10 @@ public final class SocialAlertsClient {
                 ", success: " + alertResponse.getResult().getSuccess());
     }
 
-    private static void sendAlertBatch(SocialAlertsService socialAlertsService, String sessionID) throws RemoteException {
+    private static void sendAlertBatch(SocialAlertsService socialAlertsService, String sessionID, String destEmail) throws RemoteException {
         String templateName = "batch";
-        Alert alert1 = createTestAlert(templateName);
-        Alert alert2 = createTestAlert(templateName);
+        Alert alert1 = createTestAlert(templateName, destEmail);
+        Alert alert2 = createTestAlert(templateName, destEmail);
 
         SendAlertBatchRequest alertBatchRequest = new SendAlertBatchRequest();
         alertBatchRequest.setSessionId(sessionID);
@@ -105,11 +106,11 @@ public final class SocialAlertsClient {
         }
     }
 
-    private static Alert createTestAlert(String templateID) {
+    private static Alert createTestAlert(String templateID, String destEmail) {
         Alert alert = new Alert();
         String alertUUID = UUID.randomUUID().toString();
         alert.setAlertID(alertUUID);
-        alert.setDestinationAddress("apinkin@gmail.com");
+        alert.setDestinationAddress(destEmail);
         alert.setTemplateID(templateID);
         alert.setParameters(generateAlertParameters());
         return alert;

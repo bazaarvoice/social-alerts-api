@@ -31,8 +31,6 @@ import java.util.UUID;
  */
 public class SocialAlertsServiceMailSessionManager {
 
-    public final static String MAIL_PROTOCOL = "smtps";
-
     private static SocialAlertsServiceMailSessionManager managerInstance = new SocialAlertsServiceMailSessionManager();
 
     private Map<String, Transport> transportMap = new HashMap<String, Transport>();
@@ -51,9 +49,9 @@ public class SocialAlertsServiceMailSessionManager {
 
 
         SocialAlertsServiceConfiguration config = SocialAlertsServiceConfiguration.getInstance();
-        props.put("mail.transport.protocol", MAIL_PROTOCOL);
-        props.put("mail.smtps.host", config.getSMTPHostName());
-        props.put("mail.smtps.auth", "true");
+        String prot = config.getMailTransportProtocol();
+        props.put("mail.transport.protocol", prot);
+        props.put("mail." + prot + ".auth", config.getMailProtocolAuth());
 
         Session session = Session.getInstance(props);
 

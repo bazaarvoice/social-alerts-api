@@ -66,10 +66,11 @@ Test client implementation is in the com/bazaarvoice/www/socialalerts/SocialAler
 In order to build and run the client tool:
 
 * ant generate.client
-* ant run.client -Durl=http://localhost:8080/axis2/services/SocialAlertsService -Dusername=username -Dpassword=password
+* ant run.client -Durl=http://localhost:8080/axis2/services/SocialAlertsService -Dusername=username -Dpassword=password -Ddestination=email_address
 
 The following 3 parameters are required to run a client tool:
-url for the web service end point, user name and password.
+url for the web service end point, user name and password used to authenticate with the server,
+and destination e-mail address.
 
 Since Reference Implementation of the web service authenticates with gmail's smtp server,
 you have to provide valid gmail username and password when running a client tool.

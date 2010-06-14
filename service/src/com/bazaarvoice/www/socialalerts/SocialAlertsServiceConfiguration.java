@@ -87,4 +87,12 @@ public class SocialAlertsServiceConfiguration {
         return configProperties.getProperty("template." + templateID + ".body");
     }
 
+    public String getMailTransportProtocol() {
+        return configProperties.getProperty("mail.transport.protocol");
+    }
+
+    public String getMailProtocolAuth() {
+        return configProperties.getProperty("mail." + getMailTransportProtocol() + ".auth");
+    }
+
 }

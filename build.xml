@@ -12,14 +12,15 @@
                 <isset property="url"/>
                 <isset property="username"/>
                 <isset property="password"/>
+                <isset property="destination"/>
             </and>
         </condition>
 
-        <fail message="One of the parameters are not set. Usage: SocialAlertsClient -Durl=&lt;url&gt; -Dusername=&lt;username&gt; -Dpassword=&lt;password&gt;"
+        <fail message="One of the parameters are not set. Usage: SocialAlertsClient -Durl=&lt;url&gt; -Dusername=&lt;username&gt; -Dpassword=&lt;password&gt; -Ddestination=&lt;email_address&gt;"
         unless="params.ok"/>
         
         <java classname="com.bazaarvoice.www.socialalerts.SocialAlertsClient" fork="true">
-            <arg line="${url} ${username} ${password}"/>
+            <arg line="${url} ${username} ${password} ${destination}"/>
             <classpath>
                 <pathelement location="${client.target}/SocialAlertsService-test-client.jar"/>
                 <fileset dir="${AXIS2_HOME}/lib">
