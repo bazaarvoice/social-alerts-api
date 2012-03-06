@@ -74,7 +74,7 @@
                 <sequence>
                     <element name="alertID" type="xsd:string" />
                     <element name="success" type="xsd:boolean" />
-                    <element name="fault" type="tns:SendFault" minOccurs="0" />
+                    <element name="fault" type="tns:SendFaultType" minOccurs="0" />
                 </sequence>
             </complexType>
 
@@ -155,12 +155,14 @@
             </element>
 
             <element name="SendFault">
+                <complexType>
                     <complexContent>
-                        <extension base="tns:SendFault" />
+                        <extension base="tns:SendFaultType" />
                     </complexContent>
+                </complexType>
             </element>
 
-            <complexType name="SendFault">
+            <complexType name="SendFaultType">
                     <complexContent>
                         <extension base="tns:SocialAlertsFault" />
                     </complexContent>
