@@ -1,1 +1,1 @@
-See http://code.google.com/p/bazaarvoice-socialalerts-api/wiki/DeveloperGuide
+See https://github.com/bazaarvoice/social-alerts-api/wiki/DeveloperGuide
